@@ -45,7 +45,7 @@ Person* insertBST(Person* root, Person* person){
     return root;
 }
 
-void insertPerson(long long int id, std::string name, int age, int occupation_code, int country_code, int state_code){
+void insertPerson(long long int id, std::string name, int age, int occupation_code, int country_code, int state_code, bool isvaccinated){
     if(checkCountryStateCodes(country_code, state_code)){
         // create a Person
         Person* person = new Person;
@@ -53,13 +53,14 @@ void insertPerson(long long int id, std::string name, int age, int occupation_co
         person->name = name;
         person->age = age;
         person->occupation = occupation_code;
-        person->isvaccinated = false;
+        person->isvaccinated = isvaccinated;
         person->left = NULL;
         person->right = NULL;
 
         People* metanode = db[country_code][state_code];
         metanode->next = insertBST(metanode->next, person);
         metanode->num += 1;
+        metanode->num_vaccinated += isvaccinated;
     }
 }
 
@@ -74,6 +75,45 @@ Person* searchBST(Person* root, long long int id){
             return cur;
     }
     return NULL;
+}
+
+bool checkCondition(int country_code, Person* target){
+    switch(country_code){
+        case 0 :
+            if(target->occupation != 3){
+                std::cout << "Person needs to be a medical professional to get vaccinated" << std::endl;
+                return false;
+            }
+            break;
+        case 4 :
+            if(target->age < 50){
+                std::cout << "Person needs to be atleast 50 years to get vaccinated" << std::endl;
+                return false;
+            }
+            break;
+    }
+    return true;
+}
+
+void vaccinatePerson(long long int id, int country_code, int state_code){
+    if(checkCountryStateCodes(country_code, state_code)){
+        People* node = db[country_code][state_code];
+        Person* root = node->next;
+        Person* target = searchBST(root, id);
+        if(target){
+                if(target->isvaccinated)
+                    std::cout << target->name << " already vaccinated" << std::endl;
+                else{
+                    if(checkCondition(country_code, target)){
+                        target->isvaccinated = true;
+                        node->num_vaccinated += 1;
+                        std::cout << target->name << " is vaccinated" << std::endl;
+                    }
+                }
+        }
+        else
+            std::cout << "Person not found" << std::endl;
+    }
 }
 
 void checkStatus(long long id, int country_code, int state_code){
@@ -141,6 +181,7 @@ int main(){
         }
     }
 
+    bool isvaccinated;
     int ch, country_code, state_code, occupation_code, age;
     long long int id;
     std::string name;
@@ -150,12 +191,13 @@ int main(){
         std::cout << "0 - Display country codes" << std::endl;
         std::cout << "1 - Display state codes" << std::endl;
         std::cout << "2 - Insert a person" << std::endl;
-        std::cout << "3 - Check person's status" << std::endl;
-        std::cout << "4 - Display summary" << std::endl;
-        std::cout << "5 - Exit" << std::endl;
+        std::cout << "3 - Vaccinate a person" << std::endl;
+        std::cout << "4 - Check person's status" << std::endl;
+        std::cout << "5 - Display summary" << std::endl;
+        std::cout << "6 - Exit" << std::endl;
         std::cout << "Enter choice :- " << std::endl;
         std::cin >> ch;
-        if(ch == 5)
+        if(ch == 6)
             break;
         switch(ch){
             case 0 :
@@ -186,14 +228,23 @@ int main(){
                 std::cout << "Enter state code :- " << std::endl;
                 std::cin >> state_code;
 
-                insertPerson(id, name, age, occupation_code, country_code, state_code);
+                std::cout << "Is person vaccinated?" << std::endl;
+                std::cout << "0 : No" << std::endl;
+                std::cout << "1 : Yes" << std::endl;
+                std::cin >> isvaccinated;
+                insertPerson(id, name, age, occupation_code, country_code, state_code, isvaccinated);
                 break;
             case 3 :
+                std::cout << "Enter id, country code and state code of the person to vaccinate :- " << std::endl;
+                std::cin >> id >> country_code >> state_code;
+                vaccinatePerson(id, country_code, state_code);
+                break;
+            case 4 :
                 std::cout << "Enter id, country code and state code of the person to check status" << std::endl;
                 std::cin >> id >> country_code >> state_code;
                 checkStatus(id, country_code, state_code);
                 break;
-            case 4 :
+            case 5 :
                 displaySummary();
                 break;
             default :
