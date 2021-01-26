@@ -1,0 +1,8 @@
+Occupation codes
+0 : Aviation
+1 : IT
+2 : Hotel
+3 : Medicine
+4 : Retail
+5 : Research
+6 : Other

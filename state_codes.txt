@@ -1,0 +1,21 @@
+State codes
+0 : Bihar
+1 : Karnataka
+2 : Maharashtra
+3 : Uttar Pradesh
+4 : Kerala
+
+0 : Henan
+1 : Hubei
+2 : Shandong
+
+0 : Jakarta
+
+0 : Novosibirsk
+1 : Saint Petursburg
+
+0 : Arizona
+1 : California
+2 : Florida
+3 : Ohio
+4 : Texas

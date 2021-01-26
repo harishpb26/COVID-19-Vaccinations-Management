@@ -1,0 +1,6 @@
+Country codes
+0 : India
+1 : China
+2 : Indonesia
+3 : Russia
+4 : United States
